@@ -15,5 +15,13 @@
     "body-parser": "^2.2.2",
     "express": "^5.2.1",
     "sqlite3": "^6.0.1"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DaviidCB/confirmacion-evento.git"
+  },
+  "bugs": {
+    "url": "https://github.com/DaviidCB/confirmacion-evento/issues"
+  },
+  "homepage": "https://github.com/DaviidCB/confirmacion-evento#readme"
 }
