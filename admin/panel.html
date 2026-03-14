@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>Panel Admin</title>
+</head>
+
+<body>
+
+<h1>Confirmaciones</h1>
+
+<table border="1" id="tabla">
+
+<tr>
+<th>Nombre</th>
+<th>Teléfono</th>
+<th>Correo</th>
+<th>Asistencia</th>
+</tr>
+
+</table>
+
+<script>
+
+fetch("/admin/datos")
+.then(res=>res.json())
+.then(data=>{
+
+let tabla=document.getElementById("tabla");
+
+data.forEach(p=>{
+
+let row=tabla.insertRow();
+
+row.insertCell(0).innerText=p.nombre;
+row.insertCell(1).innerText=p.telefono;
+row.insertCell(2).innerText=p.correo;
+row.insertCell(3).innerText=p.asistencia;
+
+});
+
+});
+
+</script>
+
+</body>
+</html>
