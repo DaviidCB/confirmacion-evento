@@ -1,19 +1,25 @@
 const express = require("express");
-const sqlite3 = require("sqlite3").verbose();
+const { MongoClient } = require("mongodb");
 const bodyParser = require("body-parser");
 const path = require("path");
 
 const app = express();
 
 /* base de datos */
+const uri = "mongodb+srv://daviidcaiicedo63_db_user:D5SqEbycJKsU8qic@cluster0.7i85nlo.mongodb.net/?appName=Cluster0";
 
-const db = new sqlite3.Database("./database.db", (err)=>{
-if(err){
-console.error("Error conectando a la base de datos:", err);
-}else{
+const client = new MongoClient(uri);
+
+let db;
+
+async function conectarDB(){
+await client.connect();
+db = client.db("evento");
 console.log("Base de datos conectada");
 }
-});
+
+conectarDB();
+
 
 app.use(bodyParser.json());
 
@@ -24,54 +30,32 @@ app.use("/admin", express.static(path.join(__dirname,"admin")));
 
 /* crear tabla */
 
-db.run(`
-CREATE TABLE IF NOT EXISTS asistentes(
-id INTEGER PRIMARY KEY AUTOINCREMENT,
-nombre TEXT,
-telefono TEXT,
-correo TEXT,
-asistencia TEXT
-)
-`);
+
 
 /* guardar confirmación */
 
-app.post("/confirmar", (req,res)=>{
+app.post("/confirmar", async (req,res)=>{
 
 const {nombre,telefono,correo,asistencia} = req.body;
 
-db.run(
-"INSERT INTO asistentes(nombre,telefono,correo,asistencia) VALUES(?,?,?,?)",
-[nombre,telefono,correo,asistencia],
-function(err){
-
-if(err){
-console.error(err);
-res.status(500).json({mensaje:"error"});
-return;
-}
+await db.collection("asistentes").insertOne({
+nombre,
+telefono,
+correo,
+asistencia
+});
 
 res.json({mensaje:"ok"});
 
 });
 
-});
-
 /* obtener datos admin */
 
-app.get("/admin/datos",(req,res)=>{
+app.get("/admin/datos", async (req,res)=>{
 
-db.all("SELECT * FROM asistentes",(err,rows)=>{
+const datos = await db.collection("asistentes").find().toArray();
 
-if(err){
-console.error(err);
-res.json([]);
-return;
-}
-
-res.json(rows);
-
-});
+res.json(datos);
 
 });
 
